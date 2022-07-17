@@ -1,7 +1,7 @@
 CC = C:\gbdk\bin\lcc
 PNG = C:\gbdk\bin\png2asset
 FLAG = -spr8x8 -noflip
-SRC = main maps util
+SRC = main maps
 GEN = HelmetLeft HelmetRight LegLeft1 LegLeft2 LegLeft3 LegRight1 LegRight2 LegRight3 Floor Brick
 CLEANTARGET = *.o *.asm *.lst *.sym
 

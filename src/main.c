@@ -1,7 +1,7 @@
 #include <gb/gb.h>
+#include <stdio.h>
 #include "../gen/KingHeader.h"
 #include "maps.h"
-#include "util.h"
 
 void main(void) {
     DISPLAY_ON;
@@ -11,9 +11,9 @@ void main(void) {
     set_bkg_data(0,1,Floor_tiles);
     set_bkg_data(1,1,Brick_tiles);
 
-    unsigned char* Map1 = CreateMap1();
+    unsigned char* Map = CreateMap2();
 
-    set_bkg_tiles(0,0,32,32,Map1);
+    set_bkg_tiles(0,0,32,32,Map);
 
     set_sprite_data(0,1,HelmetLeft_tiles);
     set_sprite_data(1,1,HelmetRight_tiles);
@@ -40,8 +40,10 @@ void main(void) {
     int anim = 0;
     int counter = 0;
 
-    int posX = 0;
-    int posY = 0;
+    int offX = 72;
+    int offY = 64;
+    int posX = offX;
+    int posY = offY;
 
     while(1) {
         int speedX = 0;
@@ -52,7 +54,7 @@ void main(void) {
         if (joypad() & J_DOWN) {speedY = 2; running = 1;}
         if (joypad() & J_UP) {speedY = -2; running = 1;}
 
-        if (speedX == 1) {
+        if (speedX == 2) {
             set_sprite_prop(0,0);
             set_sprite_prop(1,0);
             set_sprite_prop(2,0);
@@ -62,7 +64,7 @@ void main(void) {
             move_sprite(1,88,80);
             move_sprite(2,80,88);
             move_sprite(3,88,88);
-        } else if (speedX == -1) {
+        } else if (speedX == -2) {
             set_sprite_prop(0,32);
             set_sprite_prop(1,32);
             set_sprite_prop(2,32);
@@ -92,13 +94,19 @@ void main(void) {
         set_sprite_tile(2, 2 + (2*anim));
         set_sprite_tile(3, 3 + (2*anim));
 
-        unsigned char tileIndex = 10*(round(posY/8)) + (round(posX/8));
-        if (Map1[tileIndex] == 0x00) {
+        int tileIndex = 32*((posY+speedY)/8) + ((posX+speedX)/8);
+        if (tileIndex < 0) {
+            posX += 2;
+            posY += 2;
+        } else if (tileIndex > 1023) {
+            posX -= 2;
+            posY -= 2;
+        } else if (Map[tileIndex] == 0x00) {
             posX += speedX;
             posY += speedY;
-            move_bkg(posX, posY);
         }
 
+        move_bkg(posX - offX, posY - offY);
         wait_vbl_done();
     }
 }

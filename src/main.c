@@ -48,6 +48,7 @@ void main(void) {
     while(1) {
         int speedX = 0;
         int speedY = 0;
+        int tileIndex = 0;
         int running = 0;
         if (joypad() & J_RIGHT) {speedX = 2; running = 1;}
         if (joypad() & J_LEFT) {speedX = -2; running = 1;}
@@ -64,6 +65,11 @@ void main(void) {
             move_sprite(1,88,80);
             move_sprite(2,80,88);
             move_sprite(3,88,88);
+            if (speedY > -1) {
+                tileIndex = 32*((posY+speedY+14)/8) + ((posX+speedX+14)/8);
+            } else {
+                tileIndex = 32*((posY+speedY)/8) + ((posX+speedX+14)/8);
+            }
         } else if (speedX == -2) {
             set_sprite_prop(0,32);
             set_sprite_prop(1,32);
@@ -74,6 +80,17 @@ void main(void) {
             move_sprite(1,80,80);
             move_sprite(2,88,88);
             move_sprite(3,80,88);
+            if (speedY > -1) {
+                tileIndex = 32*((posY+speedY+14)/8) + ((posX+speedX)/8);
+            } else {
+                tileIndex = 32*((posY+speedY)/8) + ((posX+speedX)/8);
+            }
+        } else {
+            if (speedY > -1) {
+                tileIndex = 32*((posY+speedY+14)/8) + ((posX)/8);
+            } else {
+                tileIndex = 32*((posY+speedY)/8) + ((posX)/8);
+            }
         }
 
         if (running == 1) {
@@ -93,8 +110,6 @@ void main(void) {
 
         set_sprite_tile(2, 2 + (2*anim));
         set_sprite_tile(3, 3 + (2*anim));
-
-        int tileIndex = 32*((posY+speedY)/8) + ((posX+speedX)/8);
         if (tileIndex < 0) {
             posX += 2;
             posY += 2;

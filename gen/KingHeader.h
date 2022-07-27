@@ -11,4 +11,7 @@
 #include "LegRight1.h"
 #include "LegRight2.h"
 #include "LegRight3.h"
+#include "Sword_1.h"
+#include "Sword_2.h"
+#include "Sword_3.h"
 #endif

@@ -11,13 +11,14 @@ void main(void) {
     set_bkg_data(0,1,Floor_tiles);
     set_bkg_data(1,1,Brick_tiles);
 
-    unsigned char* Map = CreateMap2();
+    unsigned char* Map = CreateMap1();
 
     set_bkg_tiles(0,0,32,32,Map);
 
+	// Helmet
     set_sprite_data(0,1,HelmetLeft_tiles);
     set_sprite_data(1,1,HelmetRight_tiles);
-
+	// Leg + animation
     set_sprite_data(2,1,LegLeft1_tiles);
     set_sprite_data(3,1,LegRight1_tiles);
     set_sprite_data(4,1,LegLeft2_tiles);
@@ -26,16 +27,33 @@ void main(void) {
     set_sprite_data(7,1,LegRight1_tiles);
     set_sprite_data(8,1,LegLeft3_tiles);
     set_sprite_data(9,1,LegRight3_tiles);
+	// Sword
+	set_sprite_data(10,1,Sword_1_tiles);
+	set_sprite_data(11,1,Sword_2_tiles);
+	set_sprite_data(12,1,Sword_3_tiles);
 
+	// Body tiles
     set_sprite_tile(0,0);
     set_sprite_tile(1,1);
     set_sprite_tile(2,2);
     set_sprite_tile(3,3);
+	// Sword tiles
+	set_sprite_tile(10,10);
+	set_sprite_tile(11,11);
+	set_sprite_tile(12,12);
+	set_sprite_prop(13,96);
+	set_sprite_tile(13,10);
 
+	// Body position on screen (center)
     move_sprite(0,80,80);
     move_sprite(1,88,80);
     move_sprite(2,80,88);
     move_sprite(3,88,88);
+	// Sword position
+	move_sprite(10,96,64);
+	move_sprite(11,104,64);
+	move_sprite(12,96,72);
+	move_sprite(13,104,72);
 
     int anim = 0;
     int counter = 0;

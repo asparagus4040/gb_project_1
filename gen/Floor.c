@@ -7,7 +7,7 @@
 BANKREF(Floor)
 
 const palette_color_t Floor_palettes[4] = {
-	RGB8(255, 255, 255), RGB8(164, 164, 164), RGB8(80, 1, 11), RGB8(9, 2, 0)
+	RGB8(255, 255, 255), RGB8(164, 164, 164), RGB8(80, 1, 217), RGB8(74, 2, 0)
 };
 
 const uint8_t Floor_tiles[16] = {

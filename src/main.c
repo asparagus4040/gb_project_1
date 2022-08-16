@@ -1,145 +1,135 @@
 #include <gb/gb.h>
-#include <stdio.h>
-#include "../gen/KingHeader.h"
-#include "maps.h"
+#include <stdint.h>
+#include "../gen/genheader.h"
+
+void draw16(uint8_t s1,uint8_t s2,uint8_t s3,uint8_t s4, uint8_t x, uint8_t y) {
+    move_sprite(s1,x,y);
+    move_sprite(s2,x+8,y);
+    move_sprite(s3,x,y+8);
+    move_sprite(s4,x+8,y+8);
+}
 
 void main(void) {
     DISPLAY_ON;
     SHOW_SPRITES;
-    SHOW_BKG;
 
-    set_bkg_data(0,1,Floor_tiles);
-    set_bkg_data(1,1,Brick_tiles);
+    int8_t knightX = 0;
+    int8_t knightY = 0;
 
-    unsigned char* Map = CreateMap1();
+    //Knight
+    set_sprite_data(0,1,KnightHeadL_tiles);
+    set_sprite_data(1,1,KnightHeadR_tiles);
+    set_sprite_data(2,1,KnightLegL1_tiles);
+    set_sprite_data(3,1,KnightLegR1_tiles);
+    set_sprite_data(4,1,KnightLegL2_tiles);
+    set_sprite_data(5,1,KnightLegR2_tiles);
+    set_sprite_data(6,1,KnightLegL3_tiles);
+    set_sprite_data(7,1,KnightLegR3_tiles);
 
-    set_bkg_tiles(0,0,32,32,Map);
-
-	// Helmet
-    set_sprite_data(0,1,HelmetLeft_tiles);
-    set_sprite_data(1,1,HelmetRight_tiles);
-	// Leg + animation
-    set_sprite_data(2,1,LegLeft1_tiles);
-    set_sprite_data(3,1,LegRight1_tiles);
-    set_sprite_data(4,1,LegLeft2_tiles);
-    set_sprite_data(5,1,LegRight2_tiles);
-    set_sprite_data(6,1,LegLeft1_tiles);
-    set_sprite_data(7,1,LegRight1_tiles);
-    set_sprite_data(8,1,LegLeft3_tiles);
-    set_sprite_data(9,1,LegRight3_tiles);
-	// Sword
-	set_sprite_data(10,1,Sword_1_tiles);
-	set_sprite_data(11,1,Sword_2_tiles);
-	set_sprite_data(12,1,Sword_3_tiles);
-
-	// Body tiles
+    //Load knight tiles
     set_sprite_tile(0,0);
     set_sprite_tile(1,1);
     set_sprite_tile(2,2);
     set_sprite_tile(3,3);
-	// Sword tiles
-	set_sprite_tile(10,10);
-	set_sprite_tile(11,11);
-	set_sprite_tile(12,12);
-	set_sprite_prop(13,96);
-	set_sprite_tile(13,10);
 
-	// Body position on screen (center)
-    move_sprite(0,80,80);
-    move_sprite(1,88,80);
-    move_sprite(2,80,88);
-    move_sprite(3,88,88);
-	// Sword position
-	move_sprite(10,96,64);
-	move_sprite(11,104,64);
-	move_sprite(12,96,72);
-	move_sprite(13,104,72);
+    //Show knight
+    draw16(0,1,2,3,80,72);
 
-    int anim = 0;
-    int counter = 0;
+    //Skelly
+    set_sprite_data(8,1,SkellyHeadL_tiles);
+    set_sprite_data(9,1,SkellyHeadR_tiles);
+    set_sprite_data(10,1,SkellyLegL1_tiles);
+    set_sprite_data(11,1,SkellyLegR1_tiles);
+    set_sprite_data(12,1,SkellyLegL2_tiles);
+    set_sprite_data(13,1,SkellyLegR2_tiles);
+    set_sprite_data(14,1,SkellyLegL3_tiles);
+    set_sprite_data(15,1,SkellyLegR3_tiles);
 
-    int offX = 72;
-    int offY = 64;
-    int posX = offX;
-    int posY = offY;
+    //Load skelly tiles
+    set_sprite_tile(4,8);
+    set_sprite_tile(5,9);
+    set_sprite_tile(6,10);
+    set_sprite_tile(7,11);
+
+    int8_t skellyX = 32;
+    int8_t skellyY = 32;
+
+    //Cursor
+    set_sprite_data(16,1,cursor_tiles);
+
+    //Set cursor tile properties
+    set_sprite_prop(9,32); // top right
+    set_sprite_prop(10,64); // bottom left
+    set_sprite_prop(11, 96); // bottom right
+
+    //Load cursor tiles
+    set_sprite_tile(8,16);
+    set_sprite_tile(9,16);
+    set_sprite_tile(10,16);
+    set_sprite_tile(11,16);
+
+    int8_t speedX = 0;
+    int8_t speedY = 0;
+    int8_t targetX = 0;
+    int8_t targetY = 0;
 
     while(1) {
-        int speedX = 0;
-        int speedY = 0;
-        int tileIndex = 0;
-        int running = 0;
-        if (joypad() & J_RIGHT) {speedX = 2; running = 1;}
-        if (joypad() & J_LEFT) {speedX = -2; running = 1;}
-        if (joypad() & J_DOWN) {speedY = 2; running = 1;}
-        if (joypad() & J_UP) {speedY = -2; running = 1;}
 
-        if (speedX == 2) {
-            set_sprite_prop(0,0);
-            set_sprite_prop(1,0);
-            set_sprite_prop(2,0);
-            set_sprite_prop(3,0);
-
-            move_sprite(0,80,80);
-            move_sprite(1,88,80);
-            move_sprite(2,80,88);
-            move_sprite(3,88,88);
-            if (speedY > -1) {
-                tileIndex = 32*((posY+speedY+14)/8) + ((posX+speedX+14)/8);
-            } else {
-                tileIndex = 32*((posY+speedY)/8) + ((posX+speedX+14)/8);
+        if (knightX == targetX && knightY == targetY) {
+            speedX = 0;
+            speedY = 0;
+            if(joypad() & J_DOWN) {
+                speedY += 1;
+                targetY = knightY + 16;
             }
-        } else if (speedX == -2) {
-            set_sprite_prop(0,32);
-            set_sprite_prop(1,32);
-            set_sprite_prop(2,32);
-            set_sprite_prop(3,32);
-
-            move_sprite(0,88,80);
-            move_sprite(1,80,80);
-            move_sprite(2,88,88);
-            move_sprite(3,80,88);
-            if (speedY > -1) {
-                tileIndex = 32*((posY+speedY+14)/8) + ((posX+speedX)/8);
-            } else {
-                tileIndex = 32*((posY+speedY)/8) + ((posX+speedX)/8);
+            if(joypad() & J_UP) {
+                speedY -= 1;
+                targetY = knightY - 16;
+            }
+            if(joypad() & J_RIGHT) {
+                speedX += 1;
+                targetX = knightX + 16;
+            }
+            if(joypad() & J_LEFT) {
+                speedX -= 1;
+                targetX = knightX - 16;
             }
         } else {
-            if (speedY > -1) {
-                tileIndex = 32*((posY+speedY+14)/8) + ((posX)/8);
-            } else {
-                tileIndex = 32*((posY+speedY)/8) + ((posX)/8);
-            }
+            knightX += speedX;
+            knightY += speedY;
         }
 
-        if (running == 1) {
-            if (anim > 3) {
-                anim = 0;
-            } else {
-                if (counter > 6) {
-                    anim += 1;
-                    counter = 0;
-                } else {
-                    counter += 1;
-                }
-            }
+        int8_t deltaX = skellyX - knightX;
+        int8_t deltaY = skellyY - knightY;
+
+        draw16(4,5,6,7,80+deltaX,72+deltaY);
+
+        int8_t cursorX, cursorY;
+        int8_t cdeltaX = skellyX - targetX;
+        int8_t cdeltaY = skellyY - targetY;
+
+        if ((uint8_t)(cdeltaX) < 8) {
+            cursorX = 0;
         } else {
-            anim = 0;
+            if (cdeltaX > 0) {
+                cursorX = 16;
+            } else {
+                cursorX = -16;
+            }
         }
 
-        set_sprite_tile(2, 2 + (2*anim));
-        set_sprite_tile(3, 3 + (2*anim));
-        if (tileIndex < 0) {
-            posX += 2;
-            posY += 2;
-        } else if (tileIndex > 1023) {
-            posX -= 2;
-            posY -= 2;
-        } else if (Map[tileIndex] == 0x00) {
-            posX += speedX;
-            posY += speedY;
+        if ((uint8_t)(cdeltaY) < 8) {
+            cursorY = 0;
+        } else {
+            if (cdeltaY > 0) {
+                cursorY = 16;
+            } else {
+                cursorY = -16;
+            }
         }
 
-        move_bkg(posX - offX, posY - offY);
+        draw16(8,9,10,11,80+cursorX+targetX-knightX,72+cursorY+targetY-knightY);
+
         wait_vbl_done();
     }
 }

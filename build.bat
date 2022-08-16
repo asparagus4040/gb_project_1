@@ -1,6 +1,5 @@
 @echo off
-py KingHeader.py
-make -j4
+make
 make clean
-make cleanpng
+make cleangen
 pause
